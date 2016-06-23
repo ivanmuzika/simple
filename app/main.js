@@ -62,11 +62,17 @@ define(['durandal/app', 'durandal/viewLocator', 'durandal/system', 'plugins/rout
             }
 
             function initTemplateSettings(settings) {
-                return templateSettings.init(settings).then(function() {
-                    if (isXapiDisabled()) {
-                        templateSettings.xApi.enabled = false;
-                    }
-                    modules['xApi/xApiInitializer'] = templateSettings.xApi;
+                return settingsReader.readThemeSettings().then(function(theme) {
+                    var themeSettings = _.defaults(settings, theme);
+
+                    return templateSettings.init(themeSettings).then(function () {
+                        if (isXapiDisabled()) {
+                            templateSettings.xApi.enabled = false;
+                        }
+                        modules['xApi/xApiInitializer'] = templateSettings.xApi;
+
+                        return templateSettings;
+                    });
                 });
             }
 
